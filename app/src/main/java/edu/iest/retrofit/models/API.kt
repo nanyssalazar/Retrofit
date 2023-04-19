@@ -7,7 +7,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 class API {
     private val URL_BASE = "https://dog.ceo/api/"
 
-
+    // creamos nuestro servicio para consumir nuestra api
     fun crearServicioAPI(): ApiInterface {
         val retrofit = Retrofit.Builder()
             .baseUrl(URL_BASE)
