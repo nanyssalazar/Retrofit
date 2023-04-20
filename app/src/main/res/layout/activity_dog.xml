@@ -14,10 +14,10 @@
 
         <ImageView
             android:id="@+id/ivPerro"
-            android:layout_width="200sp"
-            android:layout_height="200sp"
+            android:layout_width="250sp"
+            android:layout_height="250sp"
             android:layout_gravity="center"
-            />
+            android:scaleType="fitXY" />
     </LinearLayout>
 
 </androidx.core.widget.NestedScrollView>

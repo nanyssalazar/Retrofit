@@ -2,10 +2,10 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <!--icono de la aplicacion-->
+    <!--icono de la barra de la aplicacion-->
     <item
         android:id="@+id/option_menu_list_images"
-        android:title="API"
+        android:title="@string/api"
         android:icon="@drawable/bob_color"
         app:showAsAction="always"
         />

@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Retrofit</string>
+    <string name="perrito_random">Perrito Random</string>
+    <string name="api">API</string>
 </resources>

@@ -5,6 +5,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 class API {
+    // definimos que url va a consumir nuestra API
     private val URL_BASE = "https://dog.ceo/api/"
 
     // creamos nuestro servicio para consumir nuestra api
@@ -15,6 +16,7 @@ class API {
             .build()
 
         val service: ApiInterface =
+            // definimos la interfaz de nuestra API
             retrofit.create(ApiInterface::class.java)
         return service }
 }
