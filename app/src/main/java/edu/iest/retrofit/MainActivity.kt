@@ -5,13 +5,12 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import android.widget.ImageView
-import android.widget.Spinner
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
+import edu.iest.retrofit.adapters.DogsAdapter
 import edu.iest.retrofit.models.API
 import edu.iest.retrofit.models.ImageRandom
 import edu.iest.retrofit.models.ImagesBreed
@@ -21,22 +20,24 @@ import retrofit2.Response
 
 
 class MainActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
+    private lateinit var spinner : Spinner
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         // identificamos nuestro array
-        val spinner = findViewById<Spinner>(R.id.spinner)
 
         // agregamos valores a nuestro spinner
         val arrayList = ArrayList<String>()
-        arrayList.add("Hound")
-        arrayList.add("Tipo 2")
-        arrayList.add("Tipo 3")
+        arrayList.add("Samoyed")
+        arrayList.add("Affenpinscher")
+        arrayList.add("Briard")
 
         // creamos un arrayAdapter para el spinner
         val arrayAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, arrayList)
 
+        spinner = findViewById<Spinner>(R.id.spinner)
         // agregamos adapter a nuestro spinner
         spinner.setAdapter(arrayAdapter);
         spinner.onItemSelectedListener = this
@@ -75,6 +76,11 @@ class MainActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
 
     // metodo para que al dar click en nuestro icono de la aplicacion llame al metodo de nuestra API listaImagenesDePerrosPorRaza
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        spinner = findViewById<Spinner>(R.id.spinner)
+        val raza = spinner.getSelectedItem().toString()
+
+       // Log.d("RAZA",raza)
+
         // indicamos que es nuestro icono con su id
         if (item.itemId == R.id.option_menu_list_images) {
             Toast.makeText(
@@ -112,7 +118,49 @@ class MainActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
     }
 
     override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-        val text: String = parent?.getItemAtPosition(position).toString()
+        val raza: String = parent?.getItemAtPosition(position).toString()
+        Log.d("raza", raza)
+        val apiCall = API().crearServicioAPI()
+
+        val layout = findViewById<View>(R.id.imageLayout) as LinearLayout
+
+        // obtenemos solamente imagenes de perros que sean del tipo de raza hound
+        apiCall.listaImagenesDePerrosPorRaza(raza.lowercase()).enqueue(object : Callback<ImagesBreed>{
+            override fun onResponse(call: Call<ImagesBreed>, response: Response<ImagesBreed>) {
+                val dogs = response.body()?.message
+                Log.d("PRUEBAS", "Status de la respuesta ${response.body()?.status}")
+                if(dogs!=null) {
+                    val linearLayoutManager = LinearLayoutManager(
+                        this@MainActivity,
+                        LinearLayoutManager.HORIZONTAL, false
+                    )
+
+                    val recycler = findViewById<RecyclerView>(R.id.recyclerDogs)
+                    recycler.layoutManager = linearLayoutManager
+
+                    recycler.adapter = DogsAdapter(dogs,this@MainActivity)
+                    for(dog in dogs) {
+                       /* val image = ImageView(this@MainActivity)
+                        Picasso.get().load(dog).into(image);
+                        image.layoutParams = ViewGroup.LayoutParams(80, 60)
+                        image.maxHeight = 500
+                        image.maxWidth = 500
+
+                        // Adds the view to the layout
+
+                        // Adds the view to the layout
+                        layout.addView(image)*/
+                        Log.d("PRUEBAS", "Perro es $dog")
+                    }
+                }
+
+            }
+
+            override fun onFailure(call: Call<ImagesBreed>, t: Throwable) {
+                TODO("Not yet implemented")
+            }
+
+        })
     }
 
     override fun onNothingSelected(parent: AdapterView<*>?) {
